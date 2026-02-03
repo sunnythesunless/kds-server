@@ -33,7 +33,7 @@ InsightOps is an enterprise knowledge management system that:
 | **Framework** | Express.js 4.18 |
 | **Database** | SQLite (dev) / PostgreSQL (prod) |
 | **ORM** | Sequelize 6.35 |
-| **AI Provider** | Google Gemini (Models: `gemini-1.5-flash`, `text-embedding-004`) |
+| **AI Provider** | Universal AI Interface (Configurable) |
 | **Analysis** | `natural` (TF-IDF), `pdf-parse`, `mammoth` |
 
 ---
@@ -99,7 +99,7 @@ flowchart TD
 ### Prerequisites
 - Node.js 18+
 - NPM
-- Google Gemini API Key
+- Valid AI API Key
 
 ### Setup
 ```bash
@@ -108,7 +108,7 @@ npm install
 
 # 2. Configure Environment
 cp .env.example .env
-# Edit .env and add your GEMINI_API_KEY
+# Edit .env and add your AI_API_KEY
 
 # 3. Start Development Server
 npm run dev
@@ -122,8 +122,7 @@ curl http://localhost:3000/health
 PORT=3000
 DB_DIALECT=sqlite
 DB_STORAGE=./data/insightops.db
-GEMINI_API_KEY=your_key_here
-GEMINI_MODEL=gemini-1.5-flash
+AI_API_KEY=your_key_here
 ```
 
 ---
@@ -156,7 +155,7 @@ GEMINI_MODEL=gemini-1.5-flash
 - **Freshness Evaluator**: penalizes documents based on age (Thresholds: SOP=90d, Policy=180d).
 - **Contradiction Detector**: Finds conflicting statements across related documents using authority ranking (`SOP > Policy > Spec`).
 - **Confidence Scorer**: Calculates final score `1.0 - penalties`.
-- **RAG Engine**: Retrieves relevant context and generates answers with Gemini.
+- **RAG Engine**: Retrieves relevant context and generates answers with AI.
 
 ---
 
