@@ -1,0 +1,13 @@
+node_modules/
+.env
+.env.local
+logs/
+uploads/
+*.txt
+test-*.js
+debug-*.js
+list-models.js
+data/
+debug-*.js
+debug-gemini.js
+test-gemini-simple.js

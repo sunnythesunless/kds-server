@@ -1,0 +1,108 @@
+/**
+ * Document Model
+ * 
+ * Represents a knowledge document in the system.
+ * Embeddings are stored as JSON (TF-IDF vectors) - designed to be
+ * migrated to a separate embeddings table for production scale.
+ */
+
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../../config/sequelize');
+
+const Document = sequelize.define('Document', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+    },
+    workspaceId: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        field: 'workspace_id',
+    },
+    title: {
+        type: DataTypes.STRING(500),
+        allowNull: false,
+    },
+    type: {
+        type: DataTypes.ENUM('SOP', 'Policy', 'Guide', 'Spec', 'Notes'),
+        allowNull: false,
+        defaultValue: 'Notes',
+    },
+    author: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+    },
+    content: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
+    currentVersion: {
+        type: DataTypes.INTEGER,
+        defaultValue: 1,
+        field: 'current_version',
+    },
+    // TF-IDF embedding stored as JSON
+    // NOTE: For production, consider separate document_embeddings table
+    embedding: {
+        type: DataTypes.JSON,
+        allowNull: true,
+    },
+    // Metadata for decay analysis
+    lastVerifiedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        field: 'last_verified_at',
+    },
+    verifiedBy: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        field: 'verified_by',
+    },
+    // AI-generated fields
+    aiSummary: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        field: 'ai_summary',
+    },
+    keyPoints: {
+        type: DataTypes.JSON,
+        defaultValue: [],
+        field: 'key_points',
+    },
+    detectedTopics: {
+        type: DataTypes.JSON,
+        defaultValue: [],
+        field: 'detected_topics',
+    },
+    // File upload metadata
+    originalFilename: {
+        type: DataTypes.STRING(500),
+        allowNull: true,
+        field: 'original_filename',
+    },
+    fileSize: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        field: 'file_size',
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        field: 'created_at',
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        field: 'updated_at',
+    },
+}, {
+    tableName: 'documents',
+    underscored: true,
+    timestamps: true,
+    indexes: [
+        { fields: ['workspace_id'] },
+        { fields: ['type'] },
+        { fields: ['updated_at'] },
+    ],
+});
+
+module.exports = Document;
