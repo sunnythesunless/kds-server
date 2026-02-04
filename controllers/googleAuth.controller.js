@@ -33,7 +33,7 @@ exports.googleAuth = async (req, res) => {
 
   // REDIRECT TO FRONTEND
   // We pass the tokens via a temporary cookie to avoid exposing them in the URL/Logs.
-  const clientUrl = process.env.CLIENT_URL || 'http://localhost:3001';
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
 
   // 15-second self-destructing cookie
   res.cookie('auth_transport', JSON.stringify({

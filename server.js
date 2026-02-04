@@ -39,6 +39,10 @@ const logger = require('./utils/logger');
 
 const app = express();
 
+// Trust proxy - REQUIRED for Render.com and other cloud hosts
+// This makes Express trust X-Forwarded-* headers so OAuth callbacks use https://
+app.set('trust proxy', 1);
+
 // Initialize databases
 async function initializeDatabases() {
   // Connect to MongoDB (for auth)
