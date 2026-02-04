@@ -32,11 +32,10 @@ exports.googleAuth = async (req, res) => {
   });
 
   // REDIRECT TO FRONTEND
-  // We pass the tokens via a temporary cookie to avoid exposing them in the URL/Logs.
+  // Cross-domain cookies don't work, so we pass tokens via URL (base64 encoded)
   const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
 
-  // 15-second self-destructing cookie
-  res.cookie('auth_transport', JSON.stringify({
+  const authData = {
     accessToken,
     refreshToken,
     user: {
@@ -45,11 +44,11 @@ exports.googleAuth = async (req, res) => {
       email: user.email,
       role: user.role
     }
-  }), {
-    maxAge: 15000,
-    httpOnly: false, // Allow client JS to read it
-    secure: process.env.NODE_ENV === 'production'
-  });
+  };
 
-  res.redirect(`${clientUrl}/auth/callback`);
+  // Base64 encode the auth data
+  const encodedAuth = Buffer.from(JSON.stringify(authData)).toString('base64');
+
+  res.redirect(`${clientUrl}/auth/callback?token=${encodedAuth}`);
 };
+
