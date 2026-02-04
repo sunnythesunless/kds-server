@@ -279,9 +279,24 @@ router.put('/reports/:id/review', asyncHandler(async (req, res) => {
 router.get('/summary', asyncHandler(async (req, res) => {
     const { workspaceId } = req.query;
 
-    // Get total document count first
-    const documentWhere = workspaceId ? { workspaceId } : {};
-    const totalDocs = await Document.count({ where: documentWhere });
+    // Graceful fallback if database isn't connected
+    let totalDocs = 0;
+    try {
+        const documentWhere = workspaceId ? { workspaceId } : {};
+        totalDocs = await Document.count({ where: documentWhere });
+    } catch (dbError) {
+        console.error('Database not connected for decay summary:', dbError.message);
+        // Return default empty summary instead of crashing
+        return res.json({
+            totalDocuments: 0,
+            analyzedDocuments: 0,
+            decayDetected: 0,
+            byRiskLevel: { high: 0, medium: 0, low: 0 },
+            byReviewStatus: { pending: 0, reviewed: 0, dismissed: 0, actioned: 0 },
+            averageConfidence: 1.0,
+            _dbStatus: 'disconnected'
+        });
+    }
 
     // Get latest analysis for each document
     // Get latest analysis for each document
